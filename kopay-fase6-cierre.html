@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F2601A">
+<title>La escalera · Fase 6 Cierre</title>
+<style>
+/* CSS compatible con celulares viejos: sin dvh, sin inset, sin position:fixed, sin env() */
+*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+html,body{margin:0;padding:0;background:#EDE7E1}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:#1C1917;-webkit-text-size-adjust:100%}
+#wrap{max-width:520px;margin:0 auto;background:#FFFFFF;min-height:100%;padding-bottom:34px;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:#1C1917}
+
+#aviso{background:#7A2A18;color:#fff;padding:16px;font-size:14px;line-height:1.5}
+#aviso b{display:block;font-size:15px;margin-bottom:6px}
+
+/* cabecera */
+#top{background:#F2601A;color:#fff;padding:12px 16px;overflow:hidden}
+#etapa{float:left;font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase}
+#paso{float:right;font-size:11px;font-weight:bold;background:rgba(255,255,255,.22);padding:4px 10px;border-radius:20px}
+
+/* escalera */
+#escalera{background:#FFF6F1;border-bottom:1px solid #EDE7E1;padding:14px 12px 12px}
+#escTit{font-size:10.5px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:#C2490F;margin-bottom:10px}
+.pasos{overflow:hidden;display:block}
+.pz{float:left;width:20%;padding:0 3px;text-align:center}
+.pzIn{background:#F3EDE8;border-radius:8px 8px 0 0;position:relative;
+  -webkit-transition:background .35s, height .35s; transition:background .35s, height .35s}
+.pz b{display:block;font-size:10px;color:#9A938C;margin-bottom:5px;font-weight:bold}
+.pz span{display:block;font-size:10.5px;line-height:1.2;color:#6B6560;margin-top:6px;min-height:26px}
+.pz.on .pzIn{background:#F2601A}
+.pz.on b{color:#C2490F}
+.pz.on span{color:#1C1917;font-weight:bold}
+.pz.hecho .pzIn{background:#F7B08A}
+
+/* escena */
+#escena{padding:16px 14px 6px}
+#dice{background:#F3EDE8;border-radius:16px 16px 16px 5px;padding:14px 16px;font-size:16px;line-height:1.45;
+  font-weight:500;min-height:58px}
+#dice b{display:block;font-size:10.5px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;
+  color:#C2490F;margin-bottom:5px}
+#reac{font-size:13px;font-style:italic;color:#C2490F;text-align:center;margin-top:10px;min-height:18px}
+
+/* opciones */
+#dock{padding:10px 14px 8px}
+#tip{font-size:11px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:#9A938C;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;background:#FFFFFF;border:1.5px solid #E4DCD4;
+  border-left:4px solid #E4DCD4;border-radius:4px 14px 14px 4px;padding:14px;margin-bottom:9px;
+  font-size:15px;line-height:1.4;color:#1C1917;min-height:56px;box-shadow:0 2px 8px rgba(28,25,23,.05)}
+.optPick{border-color:#F2601A;border-left-color:#F2601A;background:#FFF6F1}
+.optBien{border-color:#2E7D4F;border-left-color:#2E7D4F;background:#EDF7F1}
+.optMal{border-color:#C0392B;border-left-color:#C0392B;background:#FDEEEC}
+.optDim{opacity:.4}
+.chip{display:inline-block;background:#FFF6F1;color:#C2490F;border:1.5px solid #F7C9AE;border-radius:40px;
+  padding:12px 16px;margin:0 8px 8px 0;font-size:14.5px;font-weight:bold}
+.chip.on{background:#F2601A;color:#fff;border-color:#F2601A}
+.slot{display:block;background:#FFF;border:2px dashed #E4DCD4;border-radius:12px;padding:12px 14px;
+  margin-bottom:8px;font-size:14.5px;font-weight:bold;color:#B5ADA6}
+.slot.full{border-style:solid;border-color:#F2601A;color:#1C1917}
+.slot i{font-style:normal;display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;
+  border-radius:50%;background:#F3EDE8;color:#C2490F;font-size:12px;margin-right:10px}
+.slot.full i{background:#F2601A;color:#fff}
+.fb{border-left:4px solid #9A938C;background:#FAF7F4;padding:13px 14px;margin-bottom:11px;border-radius:0 10px 10px 0}
+.fb b{display:block;font-size:12px;font-weight:bold;margin-bottom:5px}
+.fb p{margin:0;font-size:14px;line-height:1.5;color:#4A443F}
+.btn{display:block;width:100%;background:#F2601A;color:#fff;border-radius:12px;padding:16px;font-size:16px;
+  font-weight:bold;text-align:center;margin-bottom:9px}
+.btnG{background:#FFF;color:#1C1917;border:1.5px solid #E4DCD4}
+
+/* pantallas */
+#intro,#fin{padding:26px 20px 30px}
+.kick{font-size:11.5px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:#C2490F;margin-bottom:10px}
+h1{font-size:34px;line-height:1.08;margin:0 0 12px}
+.lead{font-size:15px;line-height:1.55;color:#6B6560;margin:0 0 16px}
+.lead b{color:#1C1917}
+.regla{border-top:1px solid #EDE7E1;padding:12px 0;font-size:13.5px;line-height:1.5;color:#6B6560;overflow:hidden}
+.regla i{float:left;width:22px;font-style:normal;font-weight:bold;color:#F2601A}
+.regla div{margin-left:26px}.regla b{color:#1C1917}
+label{display:block;font-size:13px;color:#6B6560;margin:20px 0 8px}
+#nombre{width:100%;padding:15px;background:#FAF7F4;border:1.5px solid #E4DCD4;border-radius:12px;
+  font-family:inherit;font-size:16px;font-weight:bold;color:#1C1917}
+.nota{font-size:74px;font-weight:bold;color:#F2601A;line-height:1}
+.notaBaja{color:#9A938C}
+.notaDe{font-size:15px;color:#6B6560;margin-left:8px}
+.fila{border-top:1px solid #EDE7E1;padding:11px 0;font-size:13.5px;color:#6B6560;overflow:hidden}
+.fila b{float:right;color:#1C1917}
+.sect{font-size:11.5px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:#C2490F;margin:20px 0 10px}
+.tip{font-size:13px;line-height:1.5;color:#6B6560;border-left:2px solid #EDE7E1;padding-left:12px;margin-bottom:10px}
+.captura{border:2px dashed #F2601A;border-radius:12px;padding:13px;font-size:13px;line-height:1.5;
+  color:#6B6560;margin-top:18px;background:#FFF6F1}
+.captura b{color:#C2490F}
+.firma{margin-top:22px;font-size:11.5px;line-height:1.8;color:#9A938C}
+.firma b{display:block;color:#1C1917;font-size:12.5px}
+</style>
+</head>
+<body>
+<div id="wrap">
+
+  <div id="aviso">
+    <b>⚠ Este visor no está ejecutando la cápsula</b>
+    La estás abriendo desde una vista previa (Drive, Gmail, WhatsApp o Archivos) que bloquea el contenido
+    interactivo. Ábrela en Chrome o Safari, o pide el enlace en vez del archivo.
+  </div>
+  <noscript><div style="background:#7A2A18;color:#fff;padding:16px;font-size:14px">Activa JavaScript para hacer la cápsula.</div></noscript>
+
+  <div id="intro" style="display:none">
+    <div class="kick">Fase 6 de 6 · Cierre</div>
+    <h1>La escalera</h1>
+    <p class="lead">Laura ya te dijo lo que quiere. Ahora falta lo difícil: <b>que salga con una fecha o un apartado, no con un “lo pienso”.</b></p>
+    <div class="regla"><i>1</i><div><b>Calentamiento:</b> orden de programas, cotización y CTA.</div></div>
+    <div class="regla"><i>2</i><div><b>La escalera:</b> cada objeción sube un escalón. <b>Uno a la vez, en orden.</b></div></div>
+    <div class="regla" style="border-bottom:1px solid #EDE7E1"><i>3</i><div><b>Ojo:</b> saltarte escalones regala margen, y justificar el precio confirma que es caro.</div></div>
+    <label for="nombre">¿Cómo te llamas?</label>
+    <input id="nombre" maxlength="24" placeholder="Tu nombre" autocomplete="off">
+    <button class="btn" id="btnStart" style="margin-top:16px">Empezar</button>
+    <p class="firma">Método Konecta · Fase 6 Cierre<b>Elaborado por Yahir de la Cruz y Heidy Alvidrez</b></p>
+  </div>
+
+  <div id="juego" style="display:none">
+    <div id="top"><div id="etapa">Calentamiento</div><div id="paso">1 / 3</div></div>
+    <div id="escalera" style="display:none">
+      <div id="escTit">La secuencia de cierres · cada objeción sube un escalón</div>
+      <div class="pasos" id="pasos"></div>
+    </div>
+    <div id="escena"><div id="dice"></div><div id="reac"></div></div>
+    <div id="dock"><div id="tip">—</div><div id="zona"></div></div>
+  </div>
+
+  <div id="fin" style="display:none"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+function $(id){ return document.getElementById(id); }
+function ver(id,m){ var e=$(id); if(e) e.style.display = m ? '' : 'none'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function revuelve(a){ var b=a.slice(),i,j,x; for(i=b.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); x=b[i]; b[i]=b[j]; b[j]=x; } return b; }
+
+var jugador='', pCal=0, pEsc=0, pFinal=0, notas=[], tecleo=null;
+
+/* ================= 1. CALENTAMIENTO ================= */
+var CAL=[
+ {tipo:'orden',
+  dice:'Laura quiere axilas, bikini y bigote. Le vas a presentar el portafolio.',
+  q:'¿En qué orden se los presentas?',
+  seq:['Impulsa Kopay · 8 sesiones · el recomendado','Transforma Kopay · 12 sesiones · el premium','Avanza Kopay · 5 sesiones · solo si objeta precio'],
+  w:'Primero Impulsa, que es el recomendado; luego Transforma como la opción más completa; Avanza solo aparece si objeta precio. Nunca abras por el más barato.'},
+ {tipo:'multi',
+  dice:'Vas a cotizarle. Antes de decir el precio…',
+  q:'Marca todo lo que va en una cotización con valor:',
+  items:[{t:'Beneficio emocional antes del precio',ok:true},{t:'Precio regular y luego precio con descuento',ok:true},
+         {t:'Terminar con un CTA',ok:true},{t:'Sugerir una tercera área para el descuento por paquete',ok:true},
+         {t:'Preguntar “¿te lo cotizo?”',ok:false},{t:'Explicar por qué el láser cuesta lo que cuesta',ok:false}],
+  w:'Beneficio, precio regular, precio con descuento y CTA. “¿Te lo cotizo?” le permite decir que no, y justificar el precio confirma que es caro.'},
+ {tipo:'choice',
+  dice:'Ya le diste el precio. Toca el llamado a la acción.',
+  q:'¿Cuál CTA guía la decisión?',
+  opts:[{t:'“Tengo disponibilidad el miércoles y el viernes, ¿cuál te funciona mejor?”',ok:true},
+        {t:'“¿Qué día te agendamos?”'},{t:'“¿Cómo la ves?”'},{t:'“Si quieres lo vemos después.”'}],
+  w:'El CTA da opciones concretas y cierra la puerta a posponer. Los otros tres dejan la decisión en el aire.'}
+];
+
+/* ================= 2. LA ESCALERA ================= */
+var ESCALONES=[
+ {n:'1ª', t:'Cierre buscando el NO'},
+ {n:'2ª', t:'Cierre buscando el SÍ'},
+ {n:'3ª', t:'Garantía Kopay'},
+ {n:'4ª', t:'Cupón de axilas $149'},
+ {n:'5ª', t:'Puerta abierta'}
+];
+var RONDAS=[
+ {dice:'“Uy, sí me gusta, pero se me hace algo caro.”',
+  q:'Es la primera objeción. ¿Qué haces?',
+  opts:[
+   {t:'“Te entiendo. Más que el gasto, es dejar de batallar cada mes. ¿Hay algo que te haga dudar además del precio?”', ok:true, esc:1,
+    w:'Primera objeción, primer escalón: validas, rediriges al valor y cierras buscando el “no”. Así sabes si el precio es la verdadera razón.'},
+   {t:'“Te dejo el cupón de axilas en $149 para que se te haga más fácil.”', esc:4,
+    w:'Te saltaste hasta el cuarto escalón y regalaste margen en la primera objeción. El cupón es una carta que se juega al final, no al principio.'},
+   {t:'“Es que el láser cuesta eso porque el equipo es de alta tecnología.”',
+    w:'Justificar el precio confirma que es caro. La atención debe volver al valor, no a la máquina.'},
+   {t:'“Está bien, piénsalo y me avisas.”',
+    w:'Soltaste la venta en la primera objeción. Una objeción no termina la venta: abre otra oportunidad para cerrar.'}]},
+ {dice:'“No, nada más el precio. Déjame lo pienso.”',
+  q:'Ya sabes que el precio es lo único. ¿Ahora?',
+  opts:[
+   {t:'“Perfecto, entonces es solo cuadrar la inversión. ¿Te lo aparto hoy y lo vemos con calma?”', ok:true, esc:2,
+    w:'Segundo escalón: cierre buscando el “sí”. Confirmaste que no hay otro freno y volviste a invitar a decidir con una pregunta.'},
+   {t:'“Claro, aquí te espero cuando lo decidas.”',
+    w:'Ese “lo pienso” sin fecha es justo lo que esta fase busca evitar. Siempre se responde con una pregunta que invite a decidir.'},
+   {t:'“Te doy la Garantía Kopay si lo tomas hoy.”', esc:3,
+    w:'Brincaste al tercer escalón. Cada escalón tiene un propósito, y gastar la garantía antes de tiempo te deja sin cartas.'},
+   {t:'“¿Y de cuánto dispones? Vemos qué te alcanza.”',
+    w:'Bajar el programa al primer freno tira el valor que ya habías construido. Primero se agotan los cierres.'}]},
+ {dice:'“Es que en otro lado me lo dejaban más barato.”',
+  q:'Tercera objeción. ¿Qué escalón toca?',
+  opts:[
+   {t:'“Te entiendo. Aquí tu programa incluye la Garantía Kopay: si al terminar te falta, lo respaldamos. ¿Lo dejamos apartado?”', ok:true, esc:3,
+    w:'Tercer escalón: Garantía Kopay. Rediriges al respaldo sin hablar mal de nadie y cierras otra vez con pregunta.'},
+   {t:'“Sí, pero en esos lugares el equipo no es el mismo y luego no funciona.”',
+    w:'Hablar mal de la competencia la pone a la defensiva y no agrega valor a lo tuyo.'},
+   {t:'“Te igualo el precio, dime cuánto te daban.”',
+    w:'Igualar precio destruye el valor del programa y te deja compitiendo solo por barato.'},
+   {t:'“Te dejo el cupón de axilas en $149.”', esc:4,
+    w:'Otra vez el cupón antes de tiempo. Aún te quedaba la garantía, que no cuesta margen.'}]},
+ {dice:'“Mmm… mejor espero otra promoción.”',
+  q:'Cuarta objeción. Te queda una carta antes de la puerta.',
+  opts:[
+   {t:'“Mira, hoy puedo dejarte el cupón de axilas en $149 para que empieces. ¿Te lo aparto?”', ok:true, esc:4,
+    w:'Cuarto escalón: ahora sí el cupón, después de haber agotado los anteriores. Y termina en pregunta, como todos.'},
+   {t:'“Va, cuando salga otra promoción te aviso.”', esc:5,
+    w:'Te fuiste directo a la puerta abierta sin jugar el cupón. Todavía tenías una carta para que decidiera hoy.'},
+   {t:'“Es que esta promoción ya no va a estar después.”',
+    w:'Presionar con urgencia inventada rompe la confianza. Konecta nunca es presión.'},
+   {t:'“¿Entonces sí o no?”',
+    w:'El CTA debe ser corto, claro y amable. Así suena a ultimátum y la empuja a decir que no.'}]}
+];
+var CIERRE_BIEN={dice:'“Va, sí. Apártamelo.”', q:'Cerró. ¿Qué le dices?',
+  opts:[{t:'“¡Felicidades! Vas a tener más tiempo para ti y menos preocupación por el vello.”', ok:true,
+         w:'No damos las gracias: felicitamos. La felicitación evita que se vaya con la duda de si tomó una buena decisión.'},
+        {t:'“Muchas gracias por tu compra, de verdad te lo agradezco.”',
+         w:'Agradecer pone el favor de su lado. Felicitar le confirma que hizo una buena inversión en ella misma.'},
+        {t:'“Perfecto, ya quedó. Nos vemos el viernes.”',
+         w:'Cerraste el trámite pero no reforzaste la decisión. Ahí es donde aparece el arrepentimiento.'}]};
+var CIERRE_PUERTA={dice:'Laura contesta cortante, mira el celular y repite lo mismo sin dar más información.',
+  q:'Son señales para detenerte. ¿Qué haces?',
+  opts:[{t:'“Con gusto te lo dejo cotizado y te escribo el jueves. ¿Te late?” y la despides con calidez.', ok:true,
+         w:'Quinto escalón: puerta abierta. Despides con calidez y agendas el seguimiento a 48 horas. El cierre es un proceso, no un intento.'},
+        {t:'Insistir una vez más con el cupón y la garantía juntos.',
+         w:'Cuando aparecen las señales, seguir insistiendo quema la relación. Ahí toca la puerta abierta.'},
+        {t:'Dejarla ir sin decir nada más.',
+         w:'Sin seguimiento agendado, esa clienta rara vez regresa sola. Siempre se sale con una fecha de contacto.'}]};
+
+/* ================= MOTOR ================= */
+var cIdx=0, rIdx=0, aciertos=0, errores=0, escActual=0, bloqueado=false, ruta='';
+
+function dice(txt, quien){
+  if(tecleo){ clearInterval(tecleo); tecleo=null; }
+  var caja=$('dice'), i=0;
+  var etiqueta = (quien==='n') ? 'La escena' : 'Laura';
+  caja.innerHTML='<b>'+etiqueta+'</b><span id="tx"></span>';
+  var tx=$('tx');
+  tecleo=setInterval(function(){
+    i++; tx.innerHTML=esc(txt.substring(0,i));
+    if(i>=txt.length){ clearInterval(tecleo); tecleo=null; }
+  }, 18);
+}
+function pintaEscalera(){
+  var h='', i, cl, alturas=[34,44,54,64,74];
+  for(i=0;i<5;i++){
+    cl = (i+1===escActual) ? 'pz on' : ((i+1<escActual) ? 'pz hecho' : 'pz');
+    h+='<div class="'+cl+'"><b>'+ESCALONES[i].n+'</b><div class="pzIn" style="height:'+alturas[i]+'px"></div>'+
+       '<span>'+ESCALONES[i].t+'</span></div>';
+  }
+  $('pasos').innerHTML=h;
+}
+function fb(bien, titulo, texto, cont){
+  var z=$('zona'); z.innerHTML='';
+  var d=document.createElement('div');
+  d.className='fb'; d.style.borderLeftColor = bien ? '#2E7D4F' : '#C0392B';
+  d.innerHTML='<b style="color:'+(bien?'#2E7D4F':'#C0392B')+'">'+titulo+'</b><p>'+texto+'</p>';
+  z.appendChild(d);
+  var n=document.createElement('button'); n.className='btn'; n.type='button'; n.innerHTML=cont.t;
+  n.onclick=cont.f; z.appendChild(n);
+}
+
+/* ---------- calentamiento ---------- */
+function calent(){
+  bloqueado=false;
+  var c=CAL[cIdx], z=$('zona'), i;
+  $('etapa').innerHTML='Calentamiento'; $('paso').innerHTML=(cIdx+1)+' / 3';
+  ver('escalera',false);
+  dice(c.dice,'n');
+  $('tip').innerHTML=c.q;
+  z.innerHTML='';
+  if(c.tipo==='choice'){
+    var ops=revuelve(c.opts);
+    for(i=0;i<ops.length;i++){
+      (function(o){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.innerHTML=esc(o.t);
+        b.onclick=function(){ if(bloqueado)return; bloqueado=true;
+          var bs=z.getElementsByTagName('button'), k;
+          for(k=0;k<bs.length;k++){ bs[k].disabled=true; }
+          if(o.ok){ pCal++; } else { notas.push(c.w); }
+          fb(!!o.ok, o.ok?'Correcto':'No era esa', c.w, {t:'Siguiente', f:sigCal});
+        };
+        z.appendChild(b); })(ops[i]);
+    }
+  } else if(c.tipo==='multi'){
+    var sel={}, box=document.createElement('div');
+    revuelve(c.items).forEach(function(it){
+      var b=document.createElement('button'); b.className='chip'; b.type='button'; b.innerHTML=esc(it.t);
+      b.onclick=function(){ if(bloqueado)return;
+        if(sel[it.t]){ delete sel[it.t]; b.className='chip'; } else { sel[it.t]=1; b.className='chip on'; } };
+      box.appendChild(b);
+    });
+    z.appendChild(box);
+    var ok=document.createElement('button'); ok.className='btn'; ok.type='button'; ok.innerHTML='Confirmar';
+    ok.onclick=function(){
+      if(bloqueado)return; bloqueado=true;
+      var need=0, tengo=0, bien=true, i2;
+      for(i2=0;i2<c.items.length;i2++){
+        if(c.items[i2].ok){ need++; if(sel[c.items[i2].t]) tengo++; else bien=false; }
+        else if(sel[c.items[i2].t]) bien=false;
+      }
+      if(bien) pCal++; else notas.push(c.w);
+      fb(bien, bien?'Correcto':'Te faltó o te sobró alguna', c.w, {t:'Siguiente', f:sigCal});
+    };
+    z.appendChild(ok);
+  } else { // orden
+    var paso=0, limpio=true;
+    var slots=document.createElement('div');
+    for(i=0;i<c.seq.length;i++) slots.innerHTML+='<div class="slot"><i>'+(i+1)+'</i>—</div>';
+    z.appendChild(slots);
+    var pool=document.createElement('div');
+    revuelve(c.seq).forEach(function(txt){
+      var b=document.createElement('button'); b.className='opt'; b.type='button'; b.innerHTML=esc(txt);
+      b.onclick=function(){
+        if(bloqueado || b.className.indexOf('optDim')>=0) return;
+        if(txt===c.seq[paso]){
+          b.className='opt optDim'; b.disabled=true;
+          slots.children[paso].className='slot full';
+          slots.children[paso].innerHTML='<i>'+(paso+1)+'</i>'+esc(txt);
+          paso++;
+          if(paso===c.seq.length){ bloqueado=true;
+            if(limpio) pCal++; else notas.push(c.w);
+            fb(limpio, limpio?'Ese es el orden':'Quedó armado, pero con tropiezos', c.w, {t:'Siguiente', f:sigCal}); }
+        } else { limpio=false; b.className='opt optMal';
+          setTimeout(function(){ b.className='opt'; }, 400); }
+      };
+      pool.appendChild(b);
+    });
+    z.appendChild(pool);
+  }
+}
+function sigCal(){ cIdx++; if(cIdx>=CAL.length){ iniciaEscalera(); } else { calent(); } }
+
+/* ---------- escalera ---------- */
+function iniciaEscalera(){
+  rIdx=0; escActual=0; aciertos=0; errores=0;
+  ver('escalera',true); pintaEscalera();
+  $('etapa').innerHTML='La escalera';
+  $('reac').innerHTML='';
+  ronda();
+}
+function ronda(){
+  bloqueado=false;
+  var r=RONDAS[rIdx], z=$('zona'), i;
+  $('paso').innerHTML='Objeción '+(rIdx+1)+' / 4';
+  dice(r.dice);
+  $('reac').innerHTML='';
+  $('tip').innerHTML=r.q;
+  z.innerHTML='';
+  var ops=revuelve(r.opts);
+  for(i=0;i<ops.length;i++){
+    (function(o){
+      var b=document.createElement('button'); b.className='opt'; b.type='button'; b.innerHTML=esc(o.t);
+      b.onclick=function(){
+        if(bloqueado)return; bloqueado=true;
+        var bs=z.getElementsByTagName('button'), k;
+        for(k=0;k<bs.length;k++){ bs[k].disabled=true; if(bs[k]!==b) bs[k].className='opt optDim'; }
+        b.className='opt '+(o.ok?'optBien':'optMal');
+        if(o.ok){ aciertos++; escActual=o.esc; $('reac').innerHTML='Subiste al escalón '+o.esc+': '+ESCALONES[o.esc-1].t; }
+        else { errores++; notas.push(o.w);
+          if(o.esc){ escActual=o.esc; $('reac').innerHTML='Te saltaste al escalón '+o.esc+' sin necesidad'; }
+          else { $('reac').innerHTML='Te quedaste en el mismo escalón'; } }
+        pintaEscalera();
+        setTimeout(function(){
+          fb(!!o.ok, o.ok?('Escalón '+o.esc+' · bien jugado'):'Cuidado', o.w,
+            {t: (rIdx>=RONDAS.length-1 ? 'Ver cómo reacciona' : 'Siguiente objeción'), f: sigRonda});
+        }, 420);
+      };
+      z.appendChild(b);
+    })(ops[i]);
+  }
+}
+function sigRonda(){
+  rIdx++;
+  if(rIdx<RONDAS.length){ ronda(); return; }
+  if(errores<=1){ ruta='cierra'; final_ronda(CIERRE_BIEN, 5); }
+  else { ruta='puerta'; escActual=5; pintaEscalera(); final_ronda(CIERRE_PUERTA, 5); }
+}
+function final_ronda(R, escN){
+  bloqueado=false;
+  $('etapa').innerHTML = (ruta==='cierra') ? 'Felicitar' : 'Puerta abierta';
+  $('paso').innerHTML='Último paso';
+  dice(R.dice, (ruta==='cierra')?'':'n');
+  $('reac').innerHTML='';
+  $('tip').innerHTML=R.q;
+  var z=$('zona'); z.innerHTML='';
+  revuelve(R.opts).forEach(function(o){
+    var b=document.createElement('button'); b.className='opt'; b.type='button'; b.innerHTML=esc(o.t);
+    b.onclick=function(){
+      if(bloqueado)return; bloqueado=true;
+      var bs=z.getElementsByTagName('button'), k;
+      for(k=0;k<bs.length;k++){ bs[k].disabled=true; if(bs[k]!==b) bs[k].className='opt optDim'; }
+      b.className='opt '+(o.ok?'optBien':'optMal');
+      if(o.ok) pFinal=2; else { pFinal=0.5; notas.push(o.w); }
+      setTimeout(function(){ fb(!!o.ok, o.ok?'Así se cierra':'Casi', o.w, {t:'Ver mi calificación', f:termina}); }, 380);
+    };
+    z.appendChild(b);
+  });
+}
+
+/* ---------- calificación ---------- */
+function termina(){
+  if(tecleo){ clearInterval(tecleo); tecleo=null; }
+  ver('juego',false);
+  pEsc = aciertos*1.25;
+  var nota=Math.round(pCal+pEsc+pFinal); if(nota>10) nota=10; if(nota<0) nota=0;
+  var titulo, texto;
+  if(nota>=9){ titulo='Cierre de manual';
+    texto='Subiste la escalera escalón por escalón, sin regalar margen ni justificar el precio, y terminaste con una acción concreta.'; }
+  else if(nota>=7){ titulo='Buen cierre';
+    texto='Llevaste la conversación a una decisión. Cuida el orden: cada carta que juegas antes de tiempo es una carta que ya no tienes después.'; }
+  else if(nota>=5){ titulo='Te saltaste escalones';
+    texto='Conseguiste avanzar, pero gastaste cupón o garantía antes de tiempo. El cierre es un proceso: cada “no” te acerca a un “sí”.'; }
+  else { titulo='A repasar la fase';
+    texto='Recuerda: valida, redirige y vuelve a cerrar. Nunca justifiques el precio ni contradigas a la clienta, y siempre termina en pregunta.'; }
+  var unicos=[], i;
+  for(i=0;i<notas.length;i++){ if(unicos.join('|').indexOf(notas[i])<0) unicos.push(notas[i]); }
+  unicos=unicos.slice(0,3);
+  var desenlace = (ruta==='cierra') ? 'Laura apartó su programa' : 'Laura se fue con seguimiento a 48 horas';
+
+  var h='<div class="kick">Tu calificación</div>'+
+    '<div><span class="nota'+(nota<5?' notaBaja':'')+'">'+nota+'</span><span class="notaDe">de 10</span></div>'+
+    '<h1 style="font-size:26px;margin-top:12px">'+titulo+'</h1>'+
+    '<p class="lead">'+esc(jugador)+', '+texto+'</p>'+
+    '<div class="sect">Cómo terminó</div><div class="tip">'+desenlace+'. Llegaste al escalón '+escActual+' de 5.</div>'+
+    '<div class="sect">De dónde sale</div>'+
+    '<div class="fila">Calentamiento<b>'+pCal+' / 3</b></div>'+
+    '<div class="fila">La escalera<b>'+pEsc+' / 5</b></div>'+
+    '<div class="fila" style="border-bottom:1px solid #EDE7E1">El último paso<b>'+pFinal+' / 2</b></div>';
+  if(unicos.length){ h+='<div class="sect">Para pulir</div>';
+    for(i=0;i<unicos.length;i++) h+='<div class="tip">'+unicos[i]+'</div>'; }
+  h+='<div class="captura"><b>Toma captura de esta pantalla</b> y mándala al grupo con tu calificación.</div>'+
+     '<button class="btn" id="otra" style="margin-top:16px">Jugar otra vez</button>'+
+     '<p class="firma">Método Konecta · Fase 6 Cierre<b>Elaborado por Yahir de la Cruz y Heidy Alvidrez</b></p>';
+  $('fin').innerHTML=h; ver('fin',true);
+  try{window.scrollTo(0,0);}catch(e){}
+  if($('otra')) $('otra').onclick=function(){ location.reload(); };
+}
+
+/* ---------- arranque ---------- */
+ver('aviso',false); ver('intro',true);
+$('btnStart').onclick=function(){
+  try{
+    var v=$('nombre').value;
+    jugador=(v&&v.replace(/^\s+|\s+$/g,''))?v.replace(/^\s+|\s+$/g,''):'Asesora';
+    cIdx=0; pCal=0; pEsc=0; pFinal=0; notas=[];
+    ver('intro',false); ver('juego',true); calent();
+    try{window.scrollTo(0,0);}catch(e){}
+  }catch(err){
+    var d=document.createElement('div');
+    d.style.cssText='background:#7A2A18;color:#fff;padding:14px;margin-top:14px;border-radius:10px;font-size:13px';
+    d.innerHTML='No se pudo iniciar: '+(err&&err.message?esc(err.message):'error');
+    $('intro').appendChild(d);
+  }
+};
+$('nombre').onkeydown=function(e){ if(e&&e.keyCode===13){ if(e.preventDefault)e.preventDefault(); $('btnStart').onclick(); } };
+})();
+</script>
+</body>
+</html>
